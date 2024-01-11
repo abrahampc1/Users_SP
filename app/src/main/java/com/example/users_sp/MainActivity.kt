@@ -1,5 +1,6 @@
 package com.example.users_sp
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.DialogInterface
 import androidx.appcompat.app.AppCompatActivity
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import com.example.users_sp.databinding.ActivityMainBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.textfield.TextInputEditText
 
 class MainActivity : AppCompatActivity(), OnClickListener {
 
@@ -31,14 +33,54 @@ class MainActivity : AppCompatActivity(), OnClickListener {
 
         if(isFirstTime) {
             val dialogView = layoutInflater.inflate(R.layout.dialog_register, null)
-            MaterialAlertDialogBuilder(this)
+            /*  MaterialAlertDialogBuilder(this)
                 .setTitle(R.string.dialog_title)
                 .setView(dialogView)
                 .setCancelable(false)
-                .setPositiveButton(R.string.dialog_confirm, { dialogInterface, i ->
-                    preferences.edit().putBoolean(getString(R.string.sp_first_time), false).commit()
-                })
-                .show()
+                .setPositiveButton(R.string.dialog_confirm) { dialogInterface, i ->
+                    val username = dialogView.findViewById<TextInputEditText>(R.id.etUsername)
+                        .text.toString()
+                    with(preferences.edit()) {
+                        putBoolean(getString(R.string.sp_first_time), false).commit()
+                        putString(getString(R.string.sp_username), username)
+                            .apply()
+                    }
+                    Toast.makeText(this, R.string.register_success, Toast.LENGTH_SHORT)
+                        .show()
+                }
+                .setNeutralButton("Invitado", null)
+                .show() */
+
+              val dialog = MaterialAlertDialogBuilder(this)
+                .setTitle(R.string.dialog_title)
+                .setView(dialogView)
+                .setCancelable(false)
+                .setPositiveButton(R.string.dialog_confirm) { dialogInterface, i -> }
+                .setNeutralButton("Invitado", null)
+                  .create()
+            dialog.show()
+            dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener{
+                val username = dialogView.findViewById<TextInputEditText>(R.id.etUsername)
+                    .text.toString()
+                if (username.isBlank()){
+                    Toast.makeText(this, R.string.register_invalid, Toast.LENGTH_SHORT)
+                        .show()
+                } else {
+                    with(preferences.edit()) {
+                        putBoolean(getString(R.string.sp_first_time), false).commit()
+                        putString(getString(R.string.sp_username), username)
+                            .apply()
+                    }
+                    Toast.makeText(this, R.string.register_success, Toast.LENGTH_SHORT)
+                        .show()
+                    dialog.dismiss()
+                }
+
+            }
+
+        } else {
+            val username = preferences.getString(getString(R.string.sp_username), getString(R.string.hint_username))
+            Toast.makeText(this,"Bienvenid@ $username", Toast.LENGTH_SHORT).show()
         }
 
         userAdapter = UserAdapter(getUsers(), this)
