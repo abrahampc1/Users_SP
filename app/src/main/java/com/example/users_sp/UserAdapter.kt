@@ -10,7 +10,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.example.users_sp.databinding.ItemUserAltBinding
 import com.example.users_sp.databinding.ItemUserBinding
 
-class UserAdapter (private val users : List<User>, private val listener: OnClickListener) :
+class UserAdapter (private val users : MutableList<User>, private val listener: OnClickListener) :
     RecyclerView.Adapter<UserAdapter.ViewHolder>(){
 
     inner class ViewHolder (view : View) : RecyclerView.ViewHolder(view){
@@ -45,5 +45,11 @@ class UserAdapter (private val users : List<User>, private val listener: OnClick
                 .circleCrop()
                 .into(binding.imgPhoto)
         }
+    }
+
+    fun remove(position: Int) {
+        users.removeAt(position)
+        notifyItemRemoved(position)
+
     }
 }
